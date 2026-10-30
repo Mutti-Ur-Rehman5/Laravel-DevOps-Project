@@ -39,27 +39,41 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker compose build'
+                sh '''
+                    export COMPOSE_PROJECT_NAME=laravel-devops-project
+                    docker compose build
+                '''
             }
         }
 
         stage('Deploy Application') {
             steps {
-                sh 'docker compose up -d'
+                sh '''
+                    export COMPOSE_PROJECT_NAME=laravel-devops-project
+                    docker compose up -d
+                '''
             }
         }
 
         stage('Run Database Migrations') {
             steps {
-                sh 'docker compose exec -T app php artisan migrate --force'
+                sh '''
+                    export COMPOSE_PROJECT_NAME=laravel-devops-project
+                    docker compose exec -T app php artisan migrate --force
+                '''
             }
         }
 
         stage('Verify Deployment') {
             steps {
-                sh 'docker compose ps'
+                sh '''
+                    export COMPOSE_PROJECT_NAME=laravel-devops-project
+                    docker compose ps
+                    curl -f http://localhost:8081/students
+                '''
                 echo 'Laravel deployment completed successfully!'
             }
         }
     }
 }
+ 
